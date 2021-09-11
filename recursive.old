@@ -1,0 +1,120 @@
+import time  # import time functions
+
+
+# -----------------------------------------
+# function used to test if queen can be placed at location
+def placable(col):
+    # Check if other queen in same column
+    # if another queen, return false
+    for prevCol in sol:
+        if col == prevCol:
+            return False
+
+    # Check for other queen in diagonals
+    # if there is queen, return false
+    for prevRow, prevCol in enumerate(sol):
+        if abs(len(sol) - prevRow) == abs(col - prevCol):
+            return False
+
+    # if no issues queen can be placed, return true
+    return True
+
+
+# -----------------------------------------
+# print function
+def printBoard():
+    # global scope
+    global count
+
+    # increment counter
+    count += 1
+
+    print('Solution: ' + str(count))
+
+    # go through each item in solution list, row by row
+    for col in sol:
+
+        # create empty string for output
+        output = ""
+
+        # loop from 0 to n
+        # represents columns in the row
+        for i in range(n):
+
+            # if queen is located at index, output a 'Q'
+            if col == i:
+                output += "Q "
+
+            else:  # Otherwise output '-'
+                output += "- "
+
+        # print output
+        print(output)
+
+    print(' ')  # formatting
+
+
+# -----------------------------------------
+# recursive function to solve
+def solve(col):
+    # while there is space in row, ie columns have not reached size
+    while col < n:
+
+        # Check if queen can be placed
+        if placable(col):
+
+            # if queen can be placed, place queen restart columns at 0
+            sol.append(col)
+            col = 0
+
+            # num of items in solution list represent rows
+            # if there are n rows
+            if len(sol) == n:
+
+                # check if it is first solution, output
+                if count == 0:
+                    global firstTime
+                    firstTime = "Time to First = " + str(1000*(time.time() - startTime))+ " ms"
+
+                # print the solution found
+                printBoard()
+
+            # recursively call solve function, increase depth
+            solve(col)
+
+            # after inner depth has completed
+            # set column to next index after last placed queen
+            # continue searching for solutions
+            col = sol[- 1] + 1
+            sol.pop()
+        else:
+            col += 1  # if queen cannot be placed, increment columns
+
+    # if no solution on row, return function moving to outer depths
+    return
+
+
+# -----------------------------------------
+# Main Program
+
+# Prompt User Input
+n = int(input("input size of chess board: "))
+
+# set a counter to 0
+count = 0
+
+# create stack to store solutions
+sol = []
+
+# record time before running program
+startTime = time.time()
+
+# call function
+solve(0)
+
+# print number of solutions
+print("Number of Solutions = " + str(count))
+
+print(firstTime)
+# print time required to complete
+print("Time to Complete = ", 1000*(time.time() - startTime), "ms")
